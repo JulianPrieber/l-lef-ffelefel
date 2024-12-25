@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="icon" href="./favicon.png" type="image/png">
+      <title>Übersetzer</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+   </head>
+   <body class="h-screen overflow-hidden flex items-center justify-center" style="background: #edf2f7;">
+      <link rel="stylesheet" href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.11.2/toastify.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.8.1/cdn.min.js" defer=""></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.10/clipboard.min.js"></script>
+      <style>
+         header i,
+         header i::before {
+         font-size: 24px !important;
+         height: 20px !important;
+         }
+         /* apps popup container */
+         .apps-container {
+         width: 310px;
+         z-index: 1000;
+         }
+      </style>
+      <div style="width: 100%; height: 100%;" class="relative bg-white" x-data="{ appsPopupIsActive: false, appsIsOpen: false, sourceText: 'Nur wer wagt, kann gewinnen.', translatedText: 'Translation' }" x-init="translatedText = await translation(sourceText); appInit();">
+         <div class="flex">
+            <header class="flex flex-grow px-5 py-2 border-b border-gray-200">
+               <div class="flex-none">
+                  <div class="flex flex-grow mt-1">
+                     <a href="#">
+                     <img src="./favicon.png" width="40px" height="20px" alt="Logo" class="mt-2">
+                     </a>
+                     <div class="ml-2 my-auto text-lg font-medium text-gray-500">
+                        Übersetzer
+                     </div>
+                  </div>
+               </div>
+               <div class="flex-grow"></div>
+            </header>
+         </div>
+         <div class="before:content-[''] before:bg-gray-50 
+            before:h-24 before:w-full before:absolute
+            before:border-b before:border-gray-200
+            before:z-0 z-10">
+            <div class="container mx-auto px-0 lg:px-24">
+               <div class="flex">
+                  <div class="py-4 z-10">
+                     <button class="rounded px-3 py-1 bg-blue-100
+                        border border-blue-200 text-base text-blue-700 font-semibold
+                        focus:outline-none focus:ring-1 focus:ring-blue-600">
+                     <i class="mdi mdi-translate"></i>
+                     Text
+                     </button>
+                  </div>
+               </div>
+               <div class="flex flex-row">
+                  <div class="pb-4 top-32 h z-10 w-full">
+                     <div class="bg-white rounded-lg border border-gray-200
+                        drop-shadow-sm shadow-sm">
+                        <div class="flex border-b border-gray-300">
+                           <div class="w-7/12">
+                              <nav class="flex flex-row rounded-tl-lg">
+                                 <button class="uppercase py-3.5 px-3
+                                    text-gray-600 font-semibold 
+                                    text-xs lg:text-sm
+                                    rounded-tl-lg
+                                    hover:bg-gray-50 hover:text-gray-700
+                                    transition-colors duration-100">
+                                 Normal
+                                 </button>		
+                              </nav>
+                           </div>
+                           <div class="w-1/12">
+                              <div class="flex items-center justify-center">
+                                 <button class="hover:bg-gray-100 rounded-full 
+                                    w-10 h-10 mt-1
+                                    transition-colors duration-100">
+                                 <i class="mdi mdi-swap-horizontal mdi-24px text-gray-600"></i>
+                                 </button>
+                              </div>
+                           </div>
+                           <div class="w-7/12">
+                              <nav class="flex flex-row rounded-tl-lg">
+                                 <button class="uppercase py-3.5 px-3
+                                    text-gray-600 font-semibold 
+                                    text-xs lg:text-sm
+                                    hover:bg-gray-50 hover:text-gray-700
+                                    transition-colors duration-100">
+                                 Löffel
+                                 </button>
+                              </nav>
+                           </div>
+                        </div>
+                        <div class="flex">
+                           <div class="w-6/12 border-r border-gray-200 p-4">
+                              <div class="h-40">
+                                 <div class="flex flex-row">
+                                    <textarea class="resize-none w-full focus:outline-none
+                                       text-base lg:text-2xl text-blak
+                                       custom-scrollbar" rows="5" spellcheck="false" maxlength="5000" x-model="sourceText" x-on:keyup="translatedText = await translation(sourceText)"></textarea>
+                                    <button class="hover:bg-gray-100 rounded-full 
+                                       w-10 h-10 mt-1
+                                       transition-colors duration-100" title="Clear" x-show="sourceText.length" x-on:click="sourceText = ''; translatedText = 'Translation';" style="display: none;">
+                                    <i class="mdi mdi-window-close mdi-24px text-red-400"></i>
+                                    </button>
+                                 </div>
+                              </div>
+                              <div class="h-10">
+                                 <div class="flex flex-grow">
+                                    <div class="flex-none">
+                                       <button class="hover:bg-gray-200 rounded-full 
+                                          w-10 h-10
+                                          transition-colors duration-100">
+                                       <i class="mdi mdi-microphone mdi-24px text-gray-400"></i>
+                                       </button>
+                                       <button class="hover:bg-gray-200 rounded-full 
+                                          w-10 h-10
+                                          transition-colors duration-100" x-show="sourceText.length" style="display: none;">
+                                       <i class="mdi mdi-volume-high mdi-24px text-gray-600"></i>
+                                       </button>
+                                    </div>
+                                    <div class="grow">
+                                       <div class="flex float-right">
+                                          <div class="text-sm text-gray-400 pt-5" x-text="`${sourceText.length}/5000`">0/5000</div>
+                                          <button class="hover:bg-gray-200 rounded-full 
+                                             w-10 h-10 mt-2 ml-2
+                                             transition-colors duration-100">
+                                          <i class="mdi mdi-keyboard-outline mdi-18px text-gray-600"></i>
+                                          </button>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="w-6/12 bg-gray-100 rounded-br-lg p-4">
+                              <div class="h-40">
+                                 <div class="text-base lg:text-2xl text-black h-10 opacity-60" :class="{ 'opacity-60' : !sourceText.length }" x-text="translatedText">Translation</div>
+                              </div>
+                              <div class="h-10">
+                                 <div class="flex flex-grow" x-show="sourceText.length" style="display: none;">
+                                    <div class="flex-none">
+                                       <button class="hover:bg-gray-200 rounded-full 
+                                          w-10 h-10 mt-1
+                                          transition-colors duration-100">
+                                       <i class="mdi mdi-volume-high mdi-24px text-gray-600"></i>
+                                       </button>
+                                    </div>
+                                    <div class="grow">
+                                       <div class="flex float-right">
+                                          <button id="copy-translation" class="hover:bg-gray-200 rounded-full 
+                                             w-10 h-10 mt-1
+                                             transition-colors duration-100" :data-clipboard-text="translatedText" x-on:click="Toastify({text: 'Translation copied to your clipboard.', className: 'success rounded-md'}).showToast()" data-clipboard-text="Translation">
+                                          <i class="mdi mdi-content-copy mdi-18px text-gray-600"></i>
+                                          </button>
+                                          <button class="hover:bg-gray-200 rounded-full 
+                                             w-10 h-10 mt-1
+                                             transition-colors duration-100">
+                                          <i class="mdi mdi-thumbs-up-down-outline mdi-18px text-gray-600"></i>
+                                          </button>
+                                          <button class="hover:bg-gray-200 rounded-full 
+                                             w-10 h-10 mt-1
+                                             transition-colors duration-100">
+                                          <i class="mdi mdi-share-variant mdi-18px text-gray-600"></i>
+                                          </button>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <script>
+            function appInit() {
+                new ClipboardJS('#copy-translation');
+            }
+            
+            async function translation(sourceText) {
+                if (!sourceText || sourceText.length === 0 || sourceText.length > 5000) {
+                    return "Translation";
+                }
+            
+                const löffel = {
+                    ü: "ülefü", ö: "ölefö", ä: "älefä", a: "alefa", e: "elefe", i: "ilefi",
+                    o: "olefo", u: "ulefu"
+                };
+            
+                const convertChar = (char) => {
+                    const kleinSchreib = char.toLowerCase();
+                    const trans = löffel[kleinSchreib] || char;
+                    return char === kleinSchreib ? trans : trans.charAt(0).toUpperCase() + trans.slice(1);
+                };
+            
+                let converted = sourceText.split("").map(convertChar).join("");
+            
+                const replacements = [
+                    [/alefaulefu/g, "aulefau"],
+                    [/elefeilefi/g, "eilefei"],
+                    [/ilefielefe/g, "ielefie"],
+                    [/elefeulefu/g, "eulefeu"]
+                ];
+            
+                replacements.forEach(([pattern, replacement]) => {
+                    converted = converted.replace(pattern, replacement);
+                });
+            
+                return converted;
+            }
+         </script>
+      </div>
+   </body>
+</html>
