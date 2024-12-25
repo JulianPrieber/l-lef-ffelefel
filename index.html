@@ -99,7 +99,7 @@
                            <div class="w-6/12 border-r border-gray-200 p-4">
                               <div class="h-40">
                                  <div class="flex flex-row">
-                                    <textarea class="resize-none w-full focus:outline-none
+                                    <textarea id="text2" class="resize-none w-full focus:outline-none
                                        text-base lg:text-2xl text-blak
                                        custom-scrollbar" rows="5" spellcheck="false" maxlength="5000" x-model="sourceText" x-on:keyup="translatedText = await translation(sourceText)"></textarea>
                                     <button class="hover:bg-gray-100 rounded-full 
@@ -117,11 +117,12 @@
                                           transition-colors duration-100">
                                        <i class="mdi mdi-microphone mdi-24px text-gray-400"></i>
                                        </button>
-                                       <button class="hover:bg-gray-200 rounded-full 
-                                          w-10 h-10
-                                          transition-colors duration-100" x-show="sourceText.length" style="display: none;">
+                                       <button id="audio2" class="hover:bg-gray-200 rounded-full 
+                                       w-10 h-10 mt-1
+                                       transition-colors duration-100" x-show="sourceText.length" style="display: none;"
+                                       x-on:click="speakText(sourceText)">
                                        <i class="mdi mdi-volume-high mdi-24px text-gray-600"></i>
-                                       </button>
+                                   </button>
                                     </div>
                                     <div class="grow">
                                        <div class="flex float-right">
@@ -138,16 +139,17 @@
                            </div>
                            <div class="w-6/12 bg-gray-100 rounded-br-lg p-4">
                               <div class="h-40">
-                                 <div class="text-base lg:text-2xl text-black h-10 opacity-60" :class="{ 'opacity-60' : !sourceText.length }" x-text="translatedText">Translation</div>
+                                 <div id="text1" class="text-base lg:text-2xl text-black h-10 opacity-60" :class="{ 'opacity-60' : !sourceText.length }" x-text="translatedText">Translation</div>
                               </div>
                               <div class="h-10">
                                  <div class="flex flex-grow" x-show="sourceText.length" style="display: none;">
                                     <div class="flex-none">
-                                       <button class="hover:bg-gray-200 rounded-full 
-                                          w-10 h-10 mt-1
-                                          transition-colors duration-100">
-                                       <i class="mdi mdi-volume-high mdi-24px text-gray-600"></i>
-                                       </button>
+                                        <button id="audio1" class="hover:bg-gray-200 rounded-full 
+                                        w-10 h-10 mt-1
+                                        transition-colors duration-100" x-show="sourceText.length" style="display: none;"
+                                        x-on:click="speakText(translatedText)">
+                                        <i class="mdi mdi-volume-high mdi-24px text-gray-600"></i>
+                                        </button>
                                     </div>
                                     <div class="grow">
                                        <div class="flex float-right">
@@ -182,6 +184,12 @@
                 new ClipboardJS('#copy-translation');
             }
             
+            function speakText(text) {
+                var utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = "de-DE";
+                speechSynthesis.speak(utterance);
+            }
+
             async function translation(sourceText) {
                 if (!sourceText || sourceText.length === 0 || sourceText.length > 5000) {
                     return "Translation";
