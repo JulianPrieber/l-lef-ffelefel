@@ -64,7 +64,7 @@
                         <div class="flex border-b border-gray-300">
                            <div class="w-7/12">
                               <nav class="flex flex-row rounded-tl-lg">
-                                 <button class="uppercase py-3.5 px-3
+                                 <button id="heading1" class="uppercase py-3.5 px-3
                                     text-gray-600 font-semibold 
                                     text-xs lg:text-sm
                                     rounded-tl-lg
@@ -76,7 +76,7 @@
                            </div>
                            <div class="w-1/12">
                               <div class="flex items-center justify-center">
-                                 <button class="hover:bg-gray-100 rounded-full 
+                                 <button x-on:click="swap()" class="hover:bg-gray-100 rounded-full 
                                     w-10 h-10 mt-1
                                     transition-colors duration-100">
                                  <i class="mdi mdi-swap-horizontal mdi-24px text-gray-600"></i>
@@ -85,7 +85,7 @@
                            </div>
                            <div class="w-7/12">
                               <nav class="flex flex-row rounded-tl-lg">
-                                 <button class="uppercase py-3.5 px-3
+                                 <button id="heading2" class="uppercase py-3.5 px-3
                                     text-gray-600 font-semibold 
                                     text-xs lg:text-sm
                                     hover:bg-gray-50 hover:text-gray-700
@@ -180,8 +180,24 @@
             </div>
          </div>
          <script>
+            let swapped = false;
+
             function appInit() {
                 new ClipboardJS('#copy-translation');
+            }
+
+            function swap() {
+                swapped = !swapped;
+                const text1 = document.getElementById("text1").innerText;
+                const text2 = document.getElementById("text2").value;
+                document.getElementById("text1").innerText = text2;
+                document.getElementById("text2").value = text1;
+
+                const heading1 = document.getElementById("heading1");
+                const heading2 = document.getElementById("heading2");
+                const temp = heading1.innerText;
+                heading1.innerText = heading2.innerText;
+                heading2.innerText = temp;
             }
             
             function speakText(text) {
@@ -190,7 +206,14 @@
                 speechSynthesis.speak(utterance);
             }
 
-            async function translation(sourceText) {
+            function translation(sourceText) {
+                if (swapped) {
+                    return reverseTranslate(sourceText);
+                }
+                return translate(sourceText);
+            }
+
+            async function translate(sourceText) {
                 if (!sourceText || sourceText.length === 0 || sourceText.length > 5000) {
                     return "Translation";
                 }
@@ -221,6 +244,31 @@
             
                 return converted;
             }
+
+            async function reverseTranslate(sourceText) {
+                if (!sourceText || sourceText.length === 0 || sourceText.length > 5000) {
+                    return "Reversed Translation";
+                }
+            
+                const reverseReplacements = [
+                    [/alefa/g, "a"], // alefa -> a
+                    [/elefe/g, "e"], // elefe -> e
+                    [/ilefi/g, "i"], // ilefi -> i
+                    [/olefo/g, "o"], // olefo -> o
+                    [/ulefu/g, "u"], // ulefu -> u
+                    [/ülefü/g, "ü"], // ülefü -> ü
+                    [/ölefö/g, "ö"], // ölefö -> ö
+                    [/älefä/g, "ä"], // älefä -> ä
+                ];
+            
+                let converted = sourceText;
+                reverseReplacements.forEach(([pattern, replacement]) => {
+                    converted = converted.replace(new RegExp(pattern, "g"), replacement);
+                });
+            
+                return converted;
+            }
+
          </script>
       </div>
    </body>
